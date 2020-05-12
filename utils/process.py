@@ -33,6 +33,10 @@ def process():
 
     return exp.as_list()
 
+def xgb_process():
+    insur_dataset = InsuranceDataset()
+    insur_dataset.load()
+
 if __name__=="__main__":
-    process()
+    xgb_process()
 
