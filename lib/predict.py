@@ -22,23 +22,32 @@ class Predict():
         return pd.DataFrame.to_numpy(pd_data)
 
     def rf_predict(self):
-        data, labels, feature_names, target_name = self.insur_dataset.load_insurance()
-        train, test, labels_train, labels_test = sklearn.model_selection.train_test_split(data, labels, train_size=0.80)
+
+        data, labels, class_names, categorical_names= self.insur_dataset.load()
+        train, test, labels_train, labels_test = split_sample(data, labels)
+
+        self.encode_onehot.fit(data)
+        encoded_train = self.encode_onehot.transform(train)
 
         # use RandomForestClassifier
         rf = sklearn.ensemble.RandomForestClassifier(n_estimators=500)
 
         # fit
-        rf.fit(train, labels_train)
-        # predict output
-        print("accuracy score is ",sklearn.metrics.accuracy_score(labels_test, rf.predict(test)))
+        rf.fit(encoded_train, labels_train)
 
-        explainer = lime.lime_tabular.LimeTabularExplainer(training_data=self.pd_to_np(train), feature_names=feature_names)
-        test = self.pd_to_np(test)
+        # predict output
+        # print("accuracy score is ",sklearn.metrics.accuracy_score(labels_test,
+        #                                                           rf.predict(self.encode_onehot.transform(test))))
+
+        explainer = lime.lime_tabular.LimeTabularExplainer(training_data=train,
+                                                           feature_names=FEATURE_NAMES,
+                                                           class_names=class_names,
+                                                           categorical_features=CATEGORICAL_FEATURES,
+                                                           categorical_names=categorical_names, kernel_width=3)
+        predict_fn = lambda x: rf.predict_proba(self.encode_onehot.transform(x)).astype(float)
         # pick one at random
         i = np.random.randint(0, test.shape[0])
-        exp = explainer.explain_instance(test[i], rf.predict_proba, num_features=10, top_labels=2)
-        print(exp.as_list())
+        exp = explainer.explain_instance(test[i], predict_fn, num_features=10, top_labels=2)
 
         return exp.as_list()
 
@@ -54,10 +63,12 @@ class Predict():
         gbtree.fit(encoded_train, labels_train)
         # accuracy score
         acc_score = sklearn.metrics.accuracy_score(labels_test, gbtree.predict(self.encode_onehot.transform(test)))
-        # print(acc_score)
+        print(acc_score)
         predict_fn = lambda x: gbtree.predict_proba(self.encode_onehot.transform(x)).astype(float)
 
-        explainer = lime.lime_tabular.LimeTabularExplainer(train, feature_names=FEATURE_NAMES, class_names=class_names,
+        explainer = lime.lime_tabular.LimeTabularExplainer(training_data=train,
+                                                           feature_names=FEATURE_NAMES,
+                                                           class_names=class_names,
                                                            categorical_features=CATEGORICAL_FEATURES,
                                                            categorical_names=categorical_names, kernel_width=3)
         np.random.seed(1)

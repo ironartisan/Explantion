@@ -5,15 +5,15 @@
 
 # all features
 FEATURE_ALL= ["Age", "Job", "Marital", "Education", "Balance", "HHInsurance", "CarLoan",
-               "NoOfContacts", "DaysPassed", "PrevAttempts", "Outcome", "CarInsurance"]
+               "NoOfContacts", "DaysPassed", "PrevAttempts",  "CarInsurance"]
 # nonnumeric features
-CATEGORICAL= ["Job", "Marital", "Education", "Outcome"]
+CATEGORICAL= ["Job", "Marital", "Education"]
 
 # useful features
 FEATURE_NAMES = ["Age", "Job", "Marital", "Education", "Balance", "HHInsurance", "CarLoan",
-                 "NoOfContacts", "DaysPassed", "PrevAttempts", "Outcome"]
+                 "NoOfContacts", "DaysPassed", "PrevAttempts"]
 
 #  nonnumeric features ("Job", "Marital", "Education","Outcome") index
-CATEGORICAL_FEATURES = [1, 2, 3, 10]
+CATEGORICAL_FEATURES = [1, 2, 3]
 
 CSV_INSURANCE = "carInsurance_train.csv"
