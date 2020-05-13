@@ -1,0 +1,6 @@
+lime
+Django
+pandas
+scikit-learn==0.21.2
+xgboost
+numpy
